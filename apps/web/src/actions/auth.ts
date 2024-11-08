@@ -78,8 +78,14 @@ export async function signinAction(state: FormState, formData: FormData): Promis
         body: JSON.stringify(validationResult.data),
     })
     if (response.ok) {
-        const user = await response.json();
-        await createSession({ user });
+        const result = await response.json();
+        await createSession({
+            user: {
+                id: result.id,
+                name: result.name,
+            },
+            accessToken: result.accessToken,
+        });
 
         redirect("/");
     } else {
