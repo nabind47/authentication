@@ -10,7 +10,7 @@ export type Session = {
         name: string;
     },
     accessToken: string;
-    // refreshToken: string;
+    refreshToken: string;
 }
 
 const ENCODED = new TextEncoder().encode(process.env.JWT_SECRET);
@@ -45,4 +45,22 @@ export async function getSession() {
 
 export async function deleteSession() {
     await cookies().delete("session");
+}
+
+export async function updateSession({ accessToken, refreshToken }: { accessToken: string, refreshToken: string }) {
+    const cookie = cookies().get("session")?.value;
+    if (!cookie) return null;
+
+    const { payload } = await jwtVerify(cookie, ENCODED)
+    if (!payload) return null;
+
+    const session: Session = {
+        user: {
+            id: payload.id as string,
+            name: payload.name as string,
+        },
+        accessToken,
+        refreshToken,
+    }
+    await createSession(session);
 }

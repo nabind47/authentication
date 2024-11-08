@@ -85,6 +85,7 @@ export async function signinAction(state: FormState, formData: FormData): Promis
                 name: result.name,
             },
             accessToken: result.accessToken,
+            refreshToken: result.refreshToken,
         });
 
         redirect("/");
@@ -94,4 +95,32 @@ export async function signinAction(state: FormState, formData: FormData): Promis
         }
     }
 
-} 
+}
+
+
+export async function refreshAction(refreshToken: string) {
+    try {
+        const response = await fetch("http://localhost:3001/auth/refresh", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ refreshToken }),
+        })
+        if (!response.ok) {
+            throw new Error("Failed to refresh token");
+        }
+
+        const result = await response.json();
+        const updateResponse = await fetch("http://localhost:3000/api/auth/update", {
+            method: "POST",
+            body: JSON.stringify({ accessToken: result.accessToken, refreshToken: result.refreshToken }),
+        })
+        if (!updateResponse.ok) {
+            throw new Error("Failed to update session");
+        }
+        return result.accessToken;
+    } catch (error) {
+        return null
+    }
+}

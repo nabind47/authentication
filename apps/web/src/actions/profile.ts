@@ -1,16 +1,9 @@
 "use server"
 
-import { getSession } from "@/lib/sessions";
+import { fetchWithAuth } from "@/lib/rotation";
 
 export async function getProfile() {
-    const session = await getSession()
-
-    const res = await fetch(`http://localhost:3001/auth/profile`, {
-        headers: {
-            Authorization: `Bearer ${session?.accessToken}`,
-        }
-    });
-
+    const res = await fetchWithAuth(`http://localhost:3001/auth/profile`);
     const data = await res.json();
     return data;
 }
