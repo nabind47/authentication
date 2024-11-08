@@ -7,11 +7,12 @@ const Navbar = async () => {
 
   return (
     <div>
-      {session ? (
+      {session && session?.user ? (
         <>
           <h1>Welcome, {session.user.name}</h1>
           <Link href="/dashboard">Dashboard</Link>
-
+          <br />
+          <Link href="/profile">Profile</Link>
           <br />
           <Link href="/api/auth/signout">Sign Out</Link>
         </>
