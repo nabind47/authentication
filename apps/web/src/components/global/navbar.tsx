@@ -1,0 +1,25 @@
+import Link from "next/link";
+
+import { getSession } from "@/lib/sessions";
+
+const Navbar = async () => {
+  const session = await getSession();
+
+  return (
+    <div>
+      {session ? (
+        <>
+          <h1>Welcome, {session.user.name}</h1>
+          <Link href="/dashboard">Dashboard</Link>
+
+          <br />
+          <Link href="/api/auth/signout">Sign Out</Link>
+        </>
+      ) : (
+        <Link href="/auth/signin">Sign In</Link>
+      )}
+    </div>
+  );
+};
+
+export default Navbar;
