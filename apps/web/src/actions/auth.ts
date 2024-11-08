@@ -3,6 +3,8 @@
 import { redirect } from "next/navigation";
 import { z } from "zod";
 
+import { createSession } from "@/lib/sessions";
+
 type FormState = {
     error?: {
         name?: string[];
@@ -77,9 +79,7 @@ export async function signinAction(state: FormState, formData: FormData): Promis
     })
     if (response.ok) {
         const user = await response.json();
-
-        // TODO: SAVE SESSION
-        console.log(user)
+        await createSession({ user });
 
         redirect("/");
     } else {
@@ -88,4 +88,4 @@ export async function signinAction(state: FormState, formData: FormData): Promis
         }
     }
 
-}
+} 
