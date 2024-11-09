@@ -74,4 +74,10 @@ export class AuthService {
 
         return { id, name, accessToken, refreshToken };
     }
+    async validateGoogleUser(createUserDto: CreateUserDto) {
+        const user = await this.userService.findByEmail(createUserDto.email);
+        if (user) return user;
+
+        return this.userService.create(createUserDto);
+    }
 }

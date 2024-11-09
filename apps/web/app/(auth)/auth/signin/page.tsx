@@ -13,36 +13,40 @@ const Signin = () => {
   const { pending } = useFormStatus();
 
   return (
-    <form action={action}>
-      {state?.message && <p className="text-red-500">{state.message}</p>}
-      <div>
-        <Label htmlFor="email">Email</Label>
-        <Input
-          type="email"
-          id="email"
-          name="email"
-          placeholder="john@doe.com"
-        />
-        {state?.error?.email && (
-          <p className="text-red-500">{state.error.email}</p>
-        )}
-      </div>
-      <div>
-        <Label htmlFor="password">Password</Label>
-        <Input
-          type="password"
-          id="password"
-          name="password"
-          placeholder="********"
-        />
-        {state?.error?.password && (
-          <p className="text-red-500">{state.error.password}</p>
-        )}
-      </div>
-      <Button type="submit" disabled={pending}>
-        {pending ? "Signing in..." : "Sign in"}
-      </Button>
-    </form>
+    <div>
+      <form action={action}>
+        {state?.message && <p className="text-red-500">{state.message}</p>}
+        <div>
+          <Label htmlFor="email">Email</Label>
+          <Input
+            type="email"
+            id="email"
+            name="email"
+            placeholder="john@doe.com"
+          />
+          {state?.error?.email && (
+            <p className="text-red-500">{state.error.email}</p>
+          )}
+        </div>
+        <div>
+          <Label htmlFor="password">Password</Label>
+          <Input
+            type="password"
+            id="password"
+            name="password"
+            placeholder="********"
+          />
+          {state?.error?.password && (
+            <p className="text-red-500">{state.error.password}</p>
+          )}
+        </div>
+        <Button type="submit" disabled={pending}>
+          {pending ? "Signing in..." : "Sign in"}
+        </Button>
+      </form>
+
+      <a href="http://localhost:3001/auth/google">Google</a>
+    </div>
   );
 };
 

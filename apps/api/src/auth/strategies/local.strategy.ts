@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { BadRequestException, Injectable } from "@nestjs/common";
 import { PassportStrategy } from "@nestjs/passport";
 import { Strategy } from "passport-local";
 
@@ -13,6 +13,8 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
     }
 
     validate(email: string, password: string) {
+        if (password === '') throw new BadRequestException('Password is required');
+
         return this.authService.validateUser(email, password);
     }
 }
