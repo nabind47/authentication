@@ -7,6 +7,7 @@ import { CreateUserDto } from '../user/dto/create-user-dto';
 import refreshConfig from './config/refresh.config';
 
 import { UserService } from '../user/user.service';
+import { Role } from '@prisma/client';
 
 @Injectable()
 export class AuthService {
@@ -31,15 +32,15 @@ export class AuthService {
         const passwordMatch = await verify(user.password, password);
         if (!passwordMatch) throw new UnauthorizedException('Invalid credentials');
 
-        return { id: user.id, name: user.name };
+        return { id: user.id, name: user.name, role: user.role };
     }
 
-    async login(id: string, name?: string) {
+    async login(id: string, name?: string, role?: Role) {
         const { accessToken, refreshToken } = await this.generateToken(id);
         const hashedRefreshToken = await hash(refreshToken);
 
         await this.userService.updateRefreshToken(id, hashedRefreshToken);
-        return { id, name, accessToken, refreshToken };
+        return { id, name, role, accessToken, refreshToken };
     }
 
     async generateToken(id: string) {

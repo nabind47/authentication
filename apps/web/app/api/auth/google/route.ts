@@ -10,14 +10,16 @@ export async function GET(request: NextRequest) {
     const refreshToken = searchParams.get('refreshToken');
     const userId = searchParams.get('userId');
     const name = searchParams.get('name');
+    const role = searchParams.get('role');
 
-    if (!accessToken || !refreshToken || !userId || !name) {
+    if (!accessToken || !refreshToken || !userId || !name || !role) {
         return NextResponse.json({ error: 'Missing required parameters' }, { status: 400 });
     }
     await createSession({
         user: {
             id: userId,
-            name
+            name,
+            role
         },
         accessToken,
         refreshToken

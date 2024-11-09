@@ -8,6 +8,7 @@ export type Session = {
     user: {
         id: string;
         name: string;
+        role: string;
     },
     accessToken: string;
     refreshToken: string;
@@ -58,6 +59,7 @@ export async function updateSession({ accessToken, refreshToken }: { accessToken
         user: {
             id: payload.id as string,
             name: payload.name as string,
+            role: payload.role as string,
         },
         accessToken,
         refreshToken,

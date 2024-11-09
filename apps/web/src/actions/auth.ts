@@ -83,6 +83,7 @@ export async function signinAction(state: FormState, formData: FormData): Promis
             user: {
                 id: result.id,
                 name: result.name,
+                role: result?.role,
             },
             accessToken: result.accessToken,
             refreshToken: result.refreshToken,

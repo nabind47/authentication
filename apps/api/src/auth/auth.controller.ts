@@ -1,4 +1,5 @@
 import { Body, Controller, Get, Post, Request, Res, UseGuards } from '@nestjs/common';
+import { Role } from '@prisma/client';
 import { Response } from 'express';
 
 
@@ -11,6 +12,7 @@ import { RefreshAuthGuard } from './guards/refresh-auth/refresh-auth.guard';
 import { CreateUserDto } from '../user/dto/create-user-dto';
 
 import { Public } from './decorators/public.decorators';
+import { Roles } from './decorators/roles.decorators';
 
 @Controller('auth')
 export class AuthController {
@@ -26,9 +28,10 @@ export class AuthController {
   @UseGuards(LocalAuthGuard)
   @Post('signin')
   signin(@Request() req) {
-    return this.authService.login(req.user.id, req.user.name);
+    return this.authService.login(req.user.id, req.user.name, req.user.role);
   }
 
+  @Roles(Role.ADMIN)
   @Get('profile')
   profile(@Request() req) {
     return req.user;
@@ -50,9 +53,9 @@ export class AuthController {
   @UseGuards(GoogleAuthGuard)
   @Get('google/callback')
   async googleCallback(@Request() req, @Res() res: Response) {
-    const resonse = await this.authService.login(req.user.id, req.user.name);
+    const resonse = await this.authService.login(req.user.id, req.user.name, req.user.role);
 
-    res.redirect(`http://localhost:3000/api/auth/google?accessToken=${resonse.accessToken}&refreshToken=${resonse.refreshToken}&userId=${resonse.id}&name=${resonse.name}`)
+    res.redirect(`http://localhost:3000/api/auth/google?accessToken=${resonse.accessToken}&refreshToken=${resonse.refreshToken}&userId=${resonse.id}&name=${resonse.name}&role=${resonse.role}`)
   }
 
 
