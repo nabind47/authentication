@@ -49,4 +49,11 @@ export class AuthController {
 
     res.redirect(`http://localhost:3000/api/auth/google?accessToken=${resonse.accessToken}&refreshToken=${resonse.refreshToken}&userId=${resonse.id}&name=${resonse.name}`)
   }
+
+
+  @UseGuards(JwtAuthGuard)
+  @Post("signout")
+  signout(@Request() req) {
+    return this.authService.signout(req.user.id);
+  }
 }

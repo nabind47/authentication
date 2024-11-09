@@ -1,7 +1,7 @@
 import { ConflictException, Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigType } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
-import { verify } from 'argon2';
+import { hash, verify } from 'argon2';
 
 import { CreateUserDto } from '../user/dto/create-user-dto';
 import refreshConfig from './config/refresh.config';
@@ -36,7 +36,9 @@ export class AuthService {
 
     async login(id: string, name?: string) {
         const { accessToken, refreshToken } = await this.generateToken(id);
+        const hashedRefreshToken = await hash(refreshToken);
 
+        await this.userService.updateRefreshToken(id, hashedRefreshToken);
         return { id, name, accessToken, refreshToken };
     }
 
@@ -62,15 +64,21 @@ export class AuthService {
         return user;
     }
 
-    async validateRefresh(id: string) {
+    async validateRefresh(id: string, refreshToken: string) {
         const user = await this.userService.findById(id);
         if (!user) throw new UnauthorizedException('Invalid credentials');
+
+        const refreshTokenMatch = await verify(user.hashedRefreshToken, refreshToken);
+        if (!refreshTokenMatch) throw new UnauthorizedException('Invalid credentials');
 
         return user;
     }
 
     async refreshToken(id: string, name?: string) {
         const { accessToken, refreshToken } = await this.generateToken(id);
+        const hashedRefreshToken = await hash(refreshToken);
+
+        await this.userService.updateRefreshToken(id, hashedRefreshToken);
 
         return { id, name, accessToken, refreshToken };
     }
@@ -79,5 +87,9 @@ export class AuthService {
         if (user) return user;
 
         return this.userService.create(createUserDto);
+    }
+
+    async signout(id: string) {
+        await this.userService.updateRefreshToken(id, null);
     }
 }
